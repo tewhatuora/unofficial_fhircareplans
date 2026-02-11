@@ -1,0 +1,352 @@
+{
+  "resourceType": "PlanDefinition",
+  "id": "BMTWaitingListPlanDefinition",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/StructureDefinition/PlanDefinition"
+    ]
+  },
+  "url": "https://fhir-ig.digital.health.nz/shared-care/PlanDefinition/BMTWaitingListPlanDefinition",
+  "identifier": [
+    {
+      "use": "official",
+      "system": "https://standards.digital.health.nz/ns/central-region-plandefinition-id",
+      "value": "bmt-waiting-list-plan",
+      "period": {
+        "start": "2026-02-10"
+      }
+    }
+  ],
+  "version": "1.0.0",
+  "name": "BMTWaitingListPlanDefinition",
+  "title": "Bone Marrow Transplant Waiting List Plan Definition",
+  "type": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/plan-definition-type",
+        "code": "workflow-definition",
+        "display": "Workflow Definition"
+      }
+    ]
+  },
+  "status": "active",
+  "experimental": false,
+  "date": "2026-02-10",
+  "publisher": "Te Whatu Ora",
+  "contact": [
+    {
+      "name": "Te Whatu Ora",
+      "telecom": [
+        {
+          "system": "url",
+          "value": "https://www.tewhatuora.govt.nz/"
+        }
+      ]
+    }
+  ],
+  "description": "Plan definition for managing patients through the bone marrow transplant waiting list journey, from initial registration through to treatment completion. This plan enforces business rules ensuring proper workflow sequencing and dependencies.",
+  "jurisdiction": [
+    {
+      "coding": [
+        {
+          "system": "urn:iso:std:iso:3166",
+          "code": "NZ",
+          "display": "New Zealand"
+        }
+      ]
+    }
+  ],
+  "purpose": "To standardize and manage the bone marrow transplant waiting list workflow across New Zealand, ensuring consistent data collection, proper sequencing of activities, and comprehensive tracking of patient journey from registration to treatment completion.",
+  "usage": "This PlanDefinition should be applied using the $apply operation when a patient is initially registered on the BMT waiting list. It generates a CarePlan with four defined activities that track the patient's progress through registration, optional updates, optional treatment planning, and required finalization.",
+  "copyright": "© 2026 Te Whatu Ora. All rights reserved.",
+  "topic": [
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "32413006",
+          "display": "Transplantation of bone marrow"
+        }
+      ]
+    },
+    {
+      "coding": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "385645004",
+          "display": "Waiting list"
+        }
+      ]
+    }
+  ],
+  "relatedArtifact": [
+    {
+      "type": "depends-on",
+      "display": "BMT Waiting List Registration Questionnaire",
+      "resource": "https://example.org.nz/fhir/Questionnaire/BMTWaitingListRegistrationQuestionnaire"
+    },
+    {
+      "type": "depends-on",
+      "display": "BMT Waiting List Update Questionnaire",
+      "resource": "https://example.org.nz/fhir/Questionnaire/BMTWaitingListUpdateQuestionnaire"
+    },
+    {
+      "type": "depends-on",
+      "display": "BMT Treatment Plan Questionnaire",
+      "resource": "https://example.org.nz/fhir/Questionnaire/BMTTreatmentPlanQuestionnaire"
+    },
+    {
+      "type": "depends-on",
+      "display": "BMT Treatment Finalization Questionnaire",
+      "resource": "https://example.org.nz/fhir/Questionnaire/BMTTreatmentFinalizationQuestionnaire"
+    }
+  ],
+  "action": [
+    {
+      "id": "registration",
+      "prefix": "1",
+      "title": "Waiting List Registration",
+      "description": "REQUIRED: Initial registration of patient on bone marrow transplant waiting list. This action creates the care plan and must be completed before any other actions. Completion triggers creation of an active CarePlan for the patient.",
+      "textEquivalent": "Register patient on BMT waiting list by completing the registration questionnaire. This establishes the patient's clinical indication, referral date, and initial waiting list details.",
+      "code": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "183867002",
+              "display": "Registration procedure"
+            }
+          ]
+        }
+      ],
+      "reason": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "385645004",
+              "display": "Waiting list entry"
+            }
+          ]
+        }
+      ],
+      "documentation": [
+        {
+          "type": "documentation",
+          "display": "Business Rule: This is the only action that can be performed without prerequisites. All other actions depend on this being completed first.",
+          "url": "https://example.org.nz/bmt-workflow/registration"
+        }
+      ],
+      "condition": [
+        {
+          "kind": "applicability",
+          "description": "Patient must not have an existing active BMT waiting list registration (CarePlan with status=active for this PlanDefinition)"
+        }
+      ],
+      "type": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/action-type",
+            "code": "create",
+            "display": "Create"
+          }
+        ]
+      },
+      "priority": "routine",
+      "requiredBehavior": "must",
+      "precheckBehavior": "yes",
+      "cardinalityBehavior": "single",
+      "definitionCanonical": "https://example.org.nz/fhir/Questionnaire/BMTWaitingListRegistrationQuestionnaire",
+      "dynamicValue": [
+        {
+          "path": "action.description",
+          "expression": {
+            "language": "text/fhirpath",
+            "expression": "'Complete registration questionnaire for ' + %subject.name.given + ' ' + %subject.name.family"
+          }
+        }
+      ]
+    },
+    {
+      "id": "update",
+      "prefix": "2",
+      "title": "Waiting List Update",
+      "description": "OPTIONAL: Update waiting list information as patient status changes. Can be performed multiple times as needed throughout the waiting period. Used to track changes in clinical status, priority, readiness, or administrative details.",
+      "textEquivalent": "Update patient's waiting list status by completing the update questionnaire. This can be done as many times as needed to reflect changes in the patient's condition, priority, or readiness for treatment.",
+      "code": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "225365006",
+              "display": "Update procedure"
+            }
+          ]
+        }
+      ],
+      "documentation": [
+        {
+          "type": "documentation",
+          "display": "Business Rule: This action is optional and can be performed zero, one, or multiple times. Each submission creates a new QuestionnaireResponse that is added to the CarePlan activity outcomes.",
+          "url": "https://example.org.nz/bmt-workflow/update"
+        }
+      ],
+      "type": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/action-type",
+            "code": "update",
+            "display": "Update"
+          }
+        ]
+      },
+      "priority": "routine",
+      "requiredBehavior": "could",
+      "precheckBehavior": "no",
+      "cardinalityBehavior": "multiple",
+      "definitionCanonical": "https://example.org.nz/fhir/Questionnaire/BMTWaitingListUpdateQuestionnaire",
+      "relatedAction": [
+        {
+          "actionId": "registration",
+          "relationship": "after",
+          "offsetDuration": {
+            "value": 0,
+            "unit": "d",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          }
+        }
+      ]
+    },
+    {
+      "id": "treatment-planning",
+      "prefix": "3",
+      "title": "Treatment Planning",
+      "description": "OPTIONAL: Document treatment plan once admission is scheduled and transplant details are confirmed. Records planned dates, transplant type, conditioning regimen, and clinical team assignments. May not be needed if patient becomes ineligible for treatment.",
+      "textEquivalent": "Complete treatment planning questionnaire to document the planned transplant details, admission dates, conditioning regimen, and assigned clinical team.",
+      "code": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "312387003",
+              "display": "Treatment planning"
+            }
+          ]
+        }
+      ],
+      "reason": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "183524008",
+              "display": "Admission scheduling"
+            }
+          ]
+        }
+      ],
+      "documentation": [
+        {
+          "type": "documentation",
+          "display": "Business Rule: This action is optional. It may be skipped if the patient is removed from the waiting list, receives treatment elsewhere, or proceeds directly to emergency transplant. If completed, it should occur before finalization.",
+          "url": "https://example.org.nz/bmt-workflow/planning"
+        }
+      ],
+      "type": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/action-type",
+            "code": "create",
+            "display": "Create"
+          }
+        ]
+      },
+      "priority": "routine",
+      "requiredBehavior": "could",
+      "precheckBehavior": "no",
+      "cardinalityBehavior": "single",
+      "definitionCanonical": "https://example.org.nz/fhir/Questionnaire/BMTTreatmentPlanQuestionnaire",
+      "relatedAction": [
+        {
+          "actionId": "registration",
+          "relationship": "after",
+          "offsetDuration": {
+            "value": 1,
+            "unit": "d",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          }
+        }
+      ]
+    },
+    {
+      "id": "finalization",
+      "prefix": "4",
+      "title": "Treatment Finalization",
+      "description": "REQUIRED: Finalize actual treatment received and close transplant episode. Documents actual admission/discharge dates, transplant details, engraftment data, complications, and final patient outcome. Completion of this action closes the CarePlan and removes patient from active waiting list.",
+      "textEquivalent": "Complete the treatment finalization questionnaire to document all actual treatment details, outcomes, and close the patient's waiting list episode.",
+      "code": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "413712001",
+              "display": "Treatment outcome documented"
+            }
+          ]
+        }
+      ],
+      "reason": [
+        {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "182992009",
+              "display": "Treatment completed"
+            }
+          ]
+        }
+      ],
+      "documentation": [
+        {
+          "type": "documentation",
+          "display": "Business Rule: This action is required to properly close the waiting list episode. Completion sets the CarePlan status to 'completed' and establishes the final treatment outcome. Must be preceded by registration (action 1).",
+          "url": "https://example.org.nz/bmt-workflow/finalization"
+        }
+      ],
+      "condition": [
+        {
+          "kind": "applicability",
+          "description": "Registration (action 1) must be completed before finalization can occur"
+        }
+      ],
+      "type": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/action-type",
+            "code": "create",
+            "display": "Create"
+          }
+        ]
+      },
+      "priority": "routine",
+      "requiredBehavior": "must",
+      "precheckBehavior": "yes",
+      "cardinalityBehavior": "single",
+      "definitionCanonical": "https://example.org.nz/fhir/Questionnaire/BMTTreatmentFinalizationQuestionnaire",
+      "relatedAction": [
+        {
+          "actionId": "registration",
+          "relationship": "after",
+          "offsetDuration": {
+            "value": 1,
+            "unit": "d",
+            "system": "http://unitsofmeasure.org",
+            "code": "d"
+          }
+        }
+      ]
+    }
+  ]
+}
